@@ -11,7 +11,7 @@ import numpy as np
 import matplotlib.pyplot as pl
 
 dt = 0.025
-Nsteps = 50
+Nsteps = 60
 
 ## Setting up initial conditions (vortex centres and circulation)
 # Vortex rings
@@ -21,7 +21,7 @@ k_v = np.array([5, 5, -5, -5])
 
 # Setting up the plot
 pl.ion()
-fig, ax = pl.subplots(1,1)
+fig, ax = pl.subplots(1,1, figsize=(6,6))
 # mark the initial positions of vortices
 p, = ax.plot(x_v, y_v, 'k+', markersize=10) 
 #play around with the marker size and type as you see fit
