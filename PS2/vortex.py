@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-Insert description of the code
+(PS2 Q3)
+The following script produces an animation which models the "leapfrogging" vortex
+rings seen in lecture.
 
 @author: Benjamin Cheung
-2023-02-11
+2023-02-12
 """
 import numpy as np
 import matplotlib.pyplot as pl
@@ -37,16 +39,16 @@ r_mask = 0.25
 #so that you can see more clearly the movement of the vortex centres
 
 for i in range(len(x_v)): #looping over each vortex
-    for j in range(Y.shape[0]):
+    for j in range(Y.shape[0]): #Looping over every point in the grid
         for k in range(Y.shape[1]):
             x_diff = X[j,k] - x_v[i]
             y_diff = Y[j,k] - y_v[i]
             r = np.sqrt(x_diff **2 + y_diff **2)
             
-            if r < r_mask:
+            if r < r_mask: #mask out the velocity field near the vortices
                 vel_x[j,k] = np.nan
                 vel_y[j,k] = np.nan
-            else:
+            else: #update velocities (see problem set submission for calculation details)
                 vel_x[j,k] -= (k_v[i]*y_diff)/(r**2)
                 vel_y[j,k] += (k_v[i]*x_diff)/(r**2)
 
@@ -65,17 +67,18 @@ fig.canvas.draw()
 count = 0
 while count < Nsteps:
     ## Compute and update advection velocity
-    # insert lines to re-initialize the total velocity field
-    vel_x = np.zeros(np.shape(Y)) #this holds x-velocity
-    vel_y = np.zeros(np.shape(Y)) #this holds y-velocity
+    # re-initialize the total velocity field
+    vel_x = np.zeros(np.shape(Y)) 
+    vel_y = np.zeros(np.shape(Y)) 
     
-    x_new = np.zeros(np.shape(x_v))
+    x_new = np.zeros(np.shape(x_v)) #placeholders for new vortex positions
     y_new = np.zeros(np.shape(y_v))
-    for i in range(len(x_v)):
+    
+    for i in range(len(x_v)): #loop over each vertex
         ux = 0
         uy = 0
         
-        for j in range(len(x_v)):
+        for j in range(len(x_v)): #for each other vortex, compute velocity contribution
             if j == i:
                 continue
             
@@ -89,12 +92,10 @@ while count < Nsteps:
         x_new[i] = x_v[i] + ux*dt
         y_new[i] = y_v[i] + uy*dt
         
-    x_v = x_new
+    x_v = x_new #update positions of the vortices
     y_v = y_new
-        
-    # insert lines to update the positions of vortices
 
-    # insert lines to re-initialize the total velocity field
+   #compute the updated velocity field
     for i in range(len(x_v)):
         for j in range(Y.shape[0]):
             for k in range(Y.shape[1]):
@@ -113,18 +114,16 @@ while count < Nsteps:
     # the following two lines clear out the previous streamlines
     #ax.collections = []
     #ax.patches = []
+    
+    #The above code didn't work with my version of matplotlib, so I replaced them with this:
     for collection in ax.collections:
         collection.remove()
     for patch in ax.patches:
         patch.remove()
-    
-    #ax.clear()
 
     p.set_xdata(x_v)
     p.set_ydata(y_v)
     
-    #p, = ax.plot(x_v, y_v, 'k+', markersize=10) 
-
     ax.streamplot(X, Y, vel_x, vel_y, density=[1, 1], color='C0')
 
     fig.canvas.draw()
