@@ -28,7 +28,7 @@ p, = ax.plot(x_v, y_v, 'k+', markersize=10)
 
 # draw the initial velocity streamline
 ngrid = 5
-Y, X = np.mgrid[-ngrid:ngrid:50j, -ngrid:ngrid:50j] 
+Y, X = np.mgrid[-ngrid:ngrid:360j, -ngrid:ngrid:360j] 
 #360j sets the resolution of the cartesian grid; play around with it as you see fit
 vel_x = np.zeros(np.shape(Y)) #this holds x-velocity
 vel_y = np.zeros(np.shape(Y)) #this holds y-velocity
