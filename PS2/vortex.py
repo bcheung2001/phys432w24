@@ -28,7 +28,7 @@ p, = ax.plot(x_v, y_v, 'k+', markersize=10)
 
 # draw the initial velocity streamline
 ngrid = 5
-Y, X = np.mgrid[-ngrid:ngrid:25j, -ngrid:ngrid:25j] 
+Y, X = np.mgrid[-ngrid:ngrid:50j, -ngrid:ngrid:50j] 
 #360j sets the resolution of the cartesian grid; play around with it as you see fit
 vel_x = np.zeros(np.shape(Y)) #this holds x-velocity
 vel_y = np.zeros(np.shape(Y)) #this holds y-velocity
@@ -39,18 +39,16 @@ r_mask = 0.25
 #so that you can see more clearly the movement of the vortex centres
 
 for i in range(len(x_v)): #looping over each vortex
-    for j in range(Y.shape[0]): #Looping over every point in the grid
-        for k in range(Y.shape[1]):
-            x_diff = X[j,k] - x_v[i]
-            y_diff = Y[j,k] - y_v[i]
-            r = np.sqrt(x_diff **2 + y_diff **2)
-            
-            if r < r_mask: #mask out the velocity field near the vortices
-                vel_x[j,k] = np.nan
-                vel_y[j,k] = np.nan
-            else: #update velocities (see problem set submission for calculation details)
-                vel_x[j,k] -= (k_v[i]*y_diff)/(r**2)
-                vel_y[j,k] += (k_v[i]*x_diff)/(r**2)
+    
+    x_diff = X - x_v[i]
+    y_diff = Y - y_v[i]
+    
+    r = np.sqrt(x_diff**2 + y_diff**2)
+    
+    r_masked = np.where(r < r_mask, np.nan, r) #mask out region close to the vortex
+    
+    vel_x -= (k_v[i]*y_diff)/(r_masked**2) #update velocity fields
+    vel_y += (k_v[i]*x_diff)/(r_masked**2) #see velocity calculations in pdf submission
 
 # set up the boundaries of the simulation box
 ax.set_xlim([-ngrid, ngrid])
@@ -97,18 +95,16 @@ while count < Nsteps:
 
    #compute the updated velocity field
     for i in range(len(x_v)):
-        for j in range(Y.shape[0]):
-            for k in range(Y.shape[1]):
-                x_diff = X[j,k] - x_v[i]
-                y_diff = Y[j,k] - y_v[i]
-                r = np.sqrt(x_diff **2 + y_diff **2)
-                
-                if r < r_mask:
-                    vel_x[j,k] = np.nan
-                    vel_y[j,k] = np.nan
-                else:
-                    vel_x[j,k] -= (k_v[i]*y_diff)/(r**2)
-                    vel_y[j,k] += (k_v[i]*x_diff)/(r**2)
+        
+        x_diff = X - x_v[i]
+        y_diff = Y - y_v[i]
+        
+        r = np.sqrt(x_diff**2 + y_diff**2)
+        
+        r_masked = np.where(r < r_mask, np.nan, r)
+        
+        vel_x -= (k_v[i]*y_diff)/(r_masked**2)
+        vel_y += (k_v[i]*x_diff)/(r_masked**2)
 
     ## update plot
     # the following two lines clear out the previous streamlines
